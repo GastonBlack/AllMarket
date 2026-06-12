@@ -31,7 +31,8 @@ function getSingleSearchParam(value: string | string[] | undefined) {
 }
 
 async function getOrderHistory(): Promise<OrderHistoryResult> {
-    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+    const apiBaseUrl =
+        process.env.API_ORIGIN ?? process.env.NEXT_PUBLIC_API_BASE_URL;
 
     if (!apiBaseUrl) {
         return { status: "error" };

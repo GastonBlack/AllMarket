@@ -3,7 +3,8 @@ import { cookies } from "next/headers";
 import type { UserProfileDto } from "@/types";
 
 export async function getCurrentUser(): Promise<UserProfileDto | null> {
-    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+    const apiBaseUrl =
+        process.env.API_ORIGIN ?? process.env.NEXT_PUBLIC_API_BASE_URL;
 
     if (!apiBaseUrl) {
         return null;

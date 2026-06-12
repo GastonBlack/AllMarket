@@ -3,8 +3,13 @@ import axios, { type InternalAxiosRequestConfig } from "axios";
 import { clearUserDisplayCookies, setUserDisplayCookies } from "@/lib/authCookies";
 import type { AuthResponseDto, ErrorResponse } from "@/types";
 
+const apiBaseUrl =
+    typeof window === "undefined"
+        ? process.env.API_ORIGIN ?? process.env.NEXT_PUBLIC_API_BASE_URL
+        : undefined;
+
 const apiConfig = {
-    baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+    baseURL: apiBaseUrl,
     withCredentials: true,
     headers: {
         "Content-Type": "application/json",
