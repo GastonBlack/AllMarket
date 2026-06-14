@@ -43,6 +43,7 @@ async function getOrderHistory(): Promise<OrderHistoryResult> {
         cache: "no-store",
         headers: {
             cookie: cookieStore.toString(),
+            "ngrok-skip-browser-warning": "true",
         },
     }).catch(() => null);
 

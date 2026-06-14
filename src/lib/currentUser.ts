@@ -15,6 +15,7 @@ export async function getCurrentUser(): Promise<UserProfileDto | null> {
         cache: "no-store",
         headers: {
             cookie: cookieStore.toString(),
+            "ngrok-skip-browser-warning": "true",
         },
     }).catch(() => null);
 
