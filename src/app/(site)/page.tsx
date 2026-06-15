@@ -107,7 +107,7 @@ async function getPopularCategorySections() {
     );
 
     return categoryPages
-        .filter((section) => section.totalItems > 12)
+        .filter((section) => section.totalItems >= 8)
         .map<HomeCategorySection>(({ category, products }) => ({
             category,
             products,
