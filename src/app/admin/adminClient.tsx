@@ -483,7 +483,7 @@ export default function AdminClient({ currentUserName }: AdminClientProps) {
     return (
         <main className="min-h-screen bg-zinc-100 px-4 pb-16 text-zinc-950 sm:px-6 lg:px-8">
             <header className="mx-[calc(50%-50vw)] border-b border-zinc-200 bg-zinc-100 px-4 py-3 sm:px-6 lg:px-8">
-                <div className="mx-auto grid max-w-7xl items-center gap-3 lg:grid-cols-[1fr_auto_1fr]">
+                <div className="mx-auto grid max-w-7xl items-center gap-4 lg:grid-cols-[1fr_auto_1fr]">
                     <div className="flex items-center justify-center gap-2 lg:justify-start">
                         <Grid2X2 aria-hidden={true} size={20} />
                         <h1 className="text-xl font-semibold">Admin Panel</h1>
@@ -494,16 +494,16 @@ export default function AdminClient({ currentUserName }: AdminClientProps) {
                         onSectionChange={changeSection}
                     />
 
-                    <div className="flex items-center justify-center gap-3 lg:justify-end">
-                        <p className="text-sm text-zinc-500 text-center">
+                    <div className="flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-end">
+                        <p className="text-center text-sm text-zinc-500">
                             Signed in as{" "}
-                            <br/>
+                            <br />
                             <span className="font-semibold text-zinc-800">
                                 {currentUserName}
                             </span>
                         </p>
                         <Link
-                            className="inline-flex h-9 shrink-0 items-center rounded-md border border-zinc-200 bg-white px-4 text-sm font-medium text-zinc-950 shadow-sm transition hover:bg-zinc-50"
+                            className="inline-flex h-10 w-full items-center justify-center rounded-md border border-zinc-200 bg-white px-4 text-sm font-medium text-zinc-950 shadow-sm transition hover:bg-zinc-50 sm:h-9 sm:w-auto"
                             href="/"
                         >
                             Back to store

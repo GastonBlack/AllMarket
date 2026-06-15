@@ -64,7 +64,7 @@ export default function ProductsSection({
         <AdminPanel
             action={
                 <button
-                    className="inline-flex h-9 cursor-pointer items-center gap-2 rounded-md bg-zinc-950 px-4 text-sm font-semibold text-white transition hover:bg-zinc-800"
+                    className="inline-flex h-10 w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-zinc-950 px-4 text-sm font-semibold text-white transition hover:bg-zinc-800 sm:h-9 sm:w-auto"
                     onClick={onCreateProduct}
                     type="button"
                 >
@@ -189,7 +189,104 @@ export default function ProductsSection({
                 <EmptyTableState label="products" />
             ) : (
                 <>
-                    <div className="overflow-x-auto">
+                    <div className="grid gap-3 p-4 md:hidden">
+                        {page.items.map((product) => (
+                            <article
+                                className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm"
+                                key={product.id}
+                            >
+                                <div className="flex gap-3">
+                                    <div className="relative size-20 shrink-0 overflow-hidden rounded-md border border-zinc-100 bg-zinc-50">
+                                        {product.imageUrl ? (
+                                            <Image
+                                                alt={product.name}
+                                                className="object-contain p-2"
+                                                fill
+                                                sizes="80px"
+                                                src={product.imageUrl}
+                                            />
+                                        ) : (
+                                            <div className="flex h-full items-center justify-center px-2 text-center text-[10px] text-zinc-400">
+                                                No image
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="min-w-0 flex-1">
+                                        <div className="flex items-start justify-between gap-2">
+                                            <div className="min-w-0">
+                                                <p className="text-xs text-zinc-500">
+                                                    #{product.id} · {product.categoryName}
+                                                </p>
+                                                <h3 className="mt-1 line-clamp-2 font-semibold text-zinc-950">
+                                                    {product.name}
+                                                </h3>
+                                            </div>
+                                            <span
+                                                className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ${
+                                                    product.isActive
+                                                        ? "bg-green-50 text-green-700 ring-green-200"
+                                                        : "bg-zinc-100 text-zinc-600 ring-zinc-200"
+                                                }`}
+                                            >
+                                                {product.isActive ? "Active" : "Disabled"}
+                                            </span>
+                                        </div>
+                                        <p className="mt-2 text-lg font-semibold text-zinc-950">
+                                            {formatPrice(getAdminProductDisplayPrice(product))}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <dl className="mt-4 grid grid-cols-2 gap-3 rounded-md bg-zinc-50 p-3 text-sm">
+                                    <div>
+                                        <dt className="text-xs text-zinc-500">Stock</dt>
+                                        <dd className="mt-1 font-semibold">{product.stock}</dd>
+                                    </div>
+                                    <div>
+                                        <dt className="text-xs text-zinc-500">Available</dt>
+                                        <dd className="mt-1 font-semibold">{product.availableStock}</dd>
+                                    </div>
+                                    <div>
+                                        <dt className="text-xs text-zinc-500">Reserved</dt>
+                                        <dd className="mt-1 font-semibold">{product.reservedStock}</dd>
+                                    </div>
+                                    <div>
+                                        <dt className="text-xs text-zinc-500">Sold</dt>
+                                        <dd className="mt-1 font-semibold">{product.totalSold}</dd>
+                                    </div>
+                                </dl>
+
+                                <div className="mt-4 grid grid-cols-2 gap-2">
+                                    <button
+                                        className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-zinc-200 text-sm font-medium text-zinc-700"
+                                        onClick={() => onEditProduct(product)}
+                                        type="button"
+                                    >
+                                        <Pencil aria-hidden={true} size={15} />
+                                        Edit
+                                    </button>
+                                    <button
+                                        className={`inline-flex h-10 items-center justify-center gap-2 rounded-md border text-sm font-medium disabled:opacity-60 ${
+                                            product.isActive
+                                                ? "border-red-200 text-red-600"
+                                                : "border-green-200 text-green-700"
+                                        }`}
+                                        disabled={updatingProductId === product.id}
+                                        onClick={() => onToggleProduct(product)}
+                                        type="button"
+                                    >
+                                        {product.isActive ? (
+                                            <PowerOff aria-hidden={true} size={15} />
+                                        ) : (
+                                            <Power aria-hidden={true} size={15} />
+                                        )}
+                                        {product.isActive ? "Disable" : "Enable"}
+                                    </button>
+                                </div>
+                            </article>
+                        ))}
+                    </div>
+                    <div className="hidden overflow-x-auto md:block">
                         <table className="w-full min-w-[1050px] table-fixed text-left text-sm">
                             <colgroup>
                                 <col className="w-[5%]" />

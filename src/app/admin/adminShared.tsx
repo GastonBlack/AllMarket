@@ -1,6 +1,9 @@
+"use client";
+
 import {
     AlertCircle,
     Boxes,
+    ChevronDown,
     ClipboardList,
     PackageSearch,
     RefreshCw,
@@ -9,7 +12,7 @@ import {
     Tags,
     Users,
 } from "lucide-react";
-import type { ComponentType, ReactNode } from "react";
+import { useState, type ComponentType, type ReactNode } from "react";
 
 import Pagination from "@/components/ui/Pagination";
 import type { PaginatedResponse } from "@/types";
@@ -35,15 +38,15 @@ export function SectionTabs({
     onSectionChange: (section: AdminSection) => void;
 }) {
     return (
-        <div className="overflow-x-auto">
-            <div className="mx-auto flex w-max gap-1 rounded-lg border border-zinc-200 bg-white p-1 shadow-sm">
+        <div className="w-full">
+            <div className="mx-auto grid grid-cols-2 gap-1 rounded-lg border border-zinc-200 bg-white p-1 shadow-sm sm:flex sm:w-max">
                 {adminSections.map((section) => {
                     const Icon = section.icon;
                     const isActive = activeSection === section.value;
 
                     return (
                         <button
-                            className={`inline-flex h-9 cursor-pointer items-center gap-2 rounded-md px-3 text-sm font-medium ${isActive
+                            className={`inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded-md px-3 text-sm font-medium ${isActive
                                 ? "bg-black text-white"
                                 : "text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950"
                                 }`}
@@ -74,14 +77,14 @@ export function AdminPanel({
 }) {
     return (
         <section className="mx-auto mt-6 max-w-7xl overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-sm">
-            <header className="flex items-center justify-between gap-4 border-b border-zinc-200 px-5 py-4">
+            <header className="flex flex-col gap-4 border-b border-zinc-200 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
                 <div>
                     <h2 className="text-xl font-semibold text-zinc-950">
                         {title}
                     </h2>
                     <p className="mt-1 text-sm text-zinc-500">{subtitle}</p>
                 </div>
-                {action}
+                {action && <div className="w-full sm:w-auto">{action}</div>}
             </header>
             {children}
         </section>
@@ -155,17 +158,29 @@ export function FilterPanel({
     onReset: () => void;
     onSubmit: React.SubmitEventHandler<HTMLFormElement>;
 }) {
+    const [isOpen, setIsOpen] = useState(false);
+
     return (
         <form
             className="border-b border-zinc-200 bg-white px-5 py-4"
             onSubmit={onSubmit}
         >
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-                <div className="flex items-center gap-2 text-sm font-semibold text-zinc-950">
+            <div className={`${isOpen ? "mb-4" : ""} flex flex-wrap items-center justify-between gap-3 md:mb-4`}>
+                <button
+                    aria-expanded={isOpen}
+                    className="flex items-center gap-2 text-sm font-semibold text-zinc-950 md:pointer-events-none"
+                    onClick={() => setIsOpen((current) => !current)}
+                    type="button"
+                >
                     <SlidersHorizontal aria-hidden={true} size={17} />
                     Filters
-                </div>
-                <div className="flex gap-2">
+                    <ChevronDown
+                        aria-hidden={true}
+                        className={`transition-transform md:hidden ${isOpen ? "rotate-180" : ""}`}
+                        size={17}
+                    />
+                </button>
+                <div className={`${isOpen ? "flex" : "hidden"} gap-2 md:flex`}>
                     <button
                         className="h-9 cursor-pointer rounded-md border border-zinc-200 bg-white px-4 text-sm font-medium text-zinc-700 transition hover:border-zinc-400 hover:text-zinc-950"
                         onClick={onReset}
@@ -181,7 +196,9 @@ export function FilterPanel({
                     </button>
                 </div>
             </div>
-            {children}
+            <div className={`${isOpen ? "block" : "hidden"} md:block`}>
+                {children}
+            </div>
         </form>
     );
 }

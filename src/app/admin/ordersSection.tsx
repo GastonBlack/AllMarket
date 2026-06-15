@@ -143,7 +143,7 @@ export function OrderDetailsModal({
                     </button>
                 </header>
 
-                <div className="grid gap-4 p-6 md:grid-cols-4">
+                <div className="grid gap-4 p-4 sm:grid-cols-2 sm:p-6 md:grid-cols-4">
                     <div className="rounded-lg border border-zinc-200 p-4">
                         <p className="text-xs text-zinc-500">User</p>
                         <button
@@ -181,16 +181,16 @@ export function OrderDetailsModal({
                     </div>
                 </div>
 
-                <div className="px-6 pb-6">
+                <div className="px-4 pb-4 sm:px-6 sm:pb-6">
                     <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-4">
                         <h3 className="text-sm font-semibold text-zinc-950">
                             Status actions
                         </h3>
                         {nextStatuses.length > 0 || order.canRefund ? (
-                            <div className="mt-3 flex flex-wrap gap-3">
+                            <div className="mt-3 grid gap-3 sm:flex sm:flex-wrap">
                                 {nextStatuses.map((status) => (
                                     <button
-                                        className={`inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-md border px-4 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${getActionClassName(status)}`}
+                                        className={`inline-flex h-10 w-full cursor-pointer items-center justify-center gap-2 rounded-md border px-4 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto ${getActionClassName(status)}`}
                                         disabled={isUpdatingStatus}
                                         key={status}
                                         onClick={() => onStatusChange(status)}
@@ -208,7 +208,7 @@ export function OrderDetailsModal({
                                 ))}
                                 {order.canRefund && (
                                     <button
-                                        className="inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-md border border-red-300 bg-white px-4 text-sm font-medium text-red-700 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
+                                        className="inline-flex h-10 w-full cursor-pointer items-center justify-center gap-2 rounded-md border border-red-300 bg-white px-4 text-sm font-medium text-red-700 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
                                         disabled={isUpdatingStatus}
                                         onClick={handleRefund}
                                         type="button"
@@ -249,12 +249,47 @@ export function OrderDetailsModal({
                     </div>
                 </div>
 
-                <div className="px-6 pb-6">
+                <div className="px-4 pb-4 sm:px-6 sm:pb-6">
                     <h3 className="text-base font-semibold text-zinc-950">
                         Products
                     </h3>
                     {order.items.length > 0 ? (
-                        <div className="mt-4 overflow-x-auto rounded-lg border border-zinc-200">
+                        <>
+                            <div className="mt-4 grid gap-3 sm:hidden">
+                                {order.items.map((item) => (
+                                    <article
+                                        className="rounded-lg border border-zinc-200 p-4"
+                                        key={item.id}
+                                    >
+                                        <p className="font-semibold text-zinc-950">
+                                            {item.productName}
+                                        </p>
+                                        <p className="mt-1 text-xs text-zinc-500">
+                                            Product ID: {item.productId}
+                                        </p>
+                                        <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                                            <div>
+                                                <dt className="text-xs text-zinc-500">
+                                                    Quantity
+                                                </dt>
+                                                <dd className="mt-1">{item.quantity}</dd>
+                                            </div>
+                                            <div>
+                                                <dt className="text-xs text-zinc-500">
+                                                    Price
+                                                </dt>
+                                                <dd className="mt-1">
+                                                    {formatPrice(item.priceAtPurchase)}
+                                                </dd>
+                                            </div>
+                                        </dl>
+                                        <p className="mt-4 border-t border-zinc-100 pt-3 text-right font-semibold text-zinc-950">
+                                            {formatPrice(item.subtotal)}
+                                        </p>
+                                    </article>
+                                ))}
+                            </div>
+                            <div className="mt-4 hidden overflow-x-auto rounded-lg border border-zinc-200 sm:block">
                             <div className="min-w-[620px]">
                                 <div className="grid grid-cols-[minmax(0,1fr)_100px_120px_120px] bg-zinc-50 px-4 py-3 text-xs font-semibold uppercase text-zinc-500">
                                     <span>Product</span>
@@ -285,7 +320,8 @@ export function OrderDetailsModal({
                                     </div>
                                 ))}
                             </div>
-                        </div>
+                            </div>
+                        </>
                     ) : (
                         <p className="mt-3 rounded-lg border border-dashed border-zinc-300 p-5 text-sm text-zinc-600">
                             This response does not include product line items.
@@ -293,9 +329,9 @@ export function OrderDetailsModal({
                     )}
                 </div>
 
-                <footer className="flex justify-end border-t border-zinc-200 p-6">
+                <footer className="flex justify-end border-t border-zinc-200 p-4 sm:p-6">
                     <button
-                        className="h-10 cursor-pointer rounded-md bg-zinc-950 px-5 text-sm font-medium text-white transition hover:bg-zinc-800"
+                        className="h-10 w-full cursor-pointer rounded-md bg-zinc-950 px-5 text-sm font-medium text-white transition hover:bg-zinc-800 sm:w-auto"
                         onClick={onClose}
                         type="button"
                     >
@@ -396,7 +432,68 @@ export default function OrdersSection({
                 <EmptyTableState label="orders" />
             ) : (
                 <>
-                    <div className="overflow-x-auto">
+                    <div className="grid gap-3 p-4 md:hidden">
+                        {page.items.map((order) => (
+                            <article
+                                className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm"
+                                key={order.id}
+                            >
+                                <button
+                                    className="w-full text-left"
+                                    onClick={() => onOpenOrder(order)}
+                                    type="button"
+                                >
+                                    <div className="flex items-start justify-between gap-3">
+                                        <div>
+                                            <p className="text-xs text-zinc-500">Order</p>
+                                            <p className="mt-1 text-xl font-semibold text-zinc-950">
+                                                #{order.id}
+                                            </p>
+                                        </div>
+                                        <span
+                                            className={`rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ${getOrderStatusStyle(order.status)}`}
+                                        >
+                                            {order.status}
+                                        </span>
+                                    </div>
+                                    <dl className="mt-4 grid gap-3 text-sm">
+                                        <div>
+                                            <dt className="text-xs text-zinc-500">Customer</dt>
+                                            <dd className="mt-1 font-semibold text-zinc-950">
+                                                {order.userFullName}
+                                            </dd>
+                                            {order.userEmail && (
+                                                <dd className="mt-1 break-all text-xs text-zinc-500">
+                                                    {order.userEmail}
+                                                </dd>
+                                            )}
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <div>
+                                                <dt className="text-xs text-zinc-500">Date</dt>
+                                                <dd className="mt-1">{formatDateTime(order.createdAt)}</dd>
+                                            </div>
+                                            <div>
+                                                <dt className="text-xs text-zinc-500">Products</dt>
+                                                <dd className="mt-1">{order.productCount}</dd>
+                                            </div>
+                                        </div>
+                                    </dl>
+                                    <p className="mt-4 border-t border-zinc-100 pt-4 text-right text-lg font-semibold text-zinc-950">
+                                        {formatPrice(order.totalPrice)}
+                                    </p>
+                                </button>
+                                <button
+                                    className="mt-3 h-10 w-full rounded-md border border-zinc-200 text-sm font-medium text-zinc-700"
+                                    onClick={() => onGoToUser(order)}
+                                    type="button"
+                                >
+                                    View customer
+                                </button>
+                            </article>
+                        ))}
+                    </div>
+                    <div className="hidden overflow-x-auto md:block">
                         <table className="w-full min-w-[1080px] text-left text-sm">
                             <thead className="bg-zinc-50 text-xs uppercase text-zinc-500">
                                 <tr>

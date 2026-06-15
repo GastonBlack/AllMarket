@@ -101,7 +101,85 @@ export default function UsersSection({
                 <EmptyTableState label="users" />
             ) : (
                 <>
-                    <div className="overflow-x-auto">
+                    <div className="grid gap-3 p-4 md:hidden">
+                        {page.items.map((user) => (
+                            <article
+                                className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm"
+                                key={user.id}
+                            >
+                                <div className="flex items-start justify-between gap-3">
+                                    <div className="min-w-0">
+                                        <p className="text-xs text-zinc-500">User #{user.id}</p>
+                                        <button
+                                            className="mt-1 text-left text-lg font-semibold text-zinc-950"
+                                            onClick={() => onGoToOrders(user)}
+                                            type="button"
+                                        >
+                                            {user.fullName}
+                                        </button>
+                                    </div>
+                                    <span
+                                        className={`rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ${
+                                            user.isActive
+                                                ? "bg-green-50 text-green-700 ring-green-200"
+                                                : "bg-zinc-100 text-zinc-600 ring-zinc-200"
+                                        }`}
+                                    >
+                                        {user.isActive ? "Active" : "Disabled"}
+                                    </span>
+                                </div>
+                                <dl className="mt-4 grid gap-3 rounded-md bg-zinc-50 p-3 text-sm">
+                                    <div>
+                                        <dt className="text-xs text-zinc-500">Email</dt>
+                                        <dd className="mt-1 break-all">{user.email}</dd>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <dt className="text-xs text-zinc-500">Phone</dt>
+                                            <dd className="mt-1">{user.phone ?? "-"}</dd>
+                                        </div>
+                                        <div>
+                                            <dt className="text-xs text-zinc-500">Created</dt>
+                                            <dd className="mt-1">{formatDate(user.createdAt)}</dd>
+                                        </div>
+                                    </div>
+                                </dl>
+                                <div className="mt-4 flex items-center justify-between gap-3">
+                                    <span
+                                        className={`rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ${
+                                            user.rol === "Admin"
+                                                ? "bg-black text-white ring-black"
+                                                : "bg-zinc-100 text-zinc-700 ring-zinc-200"
+                                        }`}
+                                    >
+                                        {user.rol}
+                                    </span>
+                                    {user.rol === "Admin" ? (
+                                        <span className="text-xs text-zinc-400">Protected</span>
+                                    ) : (
+                                        <button
+                                            className={`inline-flex h-10 items-center gap-2 rounded-md border px-4 text-sm font-medium disabled:opacity-60 ${
+                                                user.isActive
+                                                    ? "border-red-200 text-red-600"
+                                                    : "border-green-200 text-green-700"
+                                            }`}
+                                            disabled={updatingUserId === user.id}
+                                            onClick={() => onToggleUser(user)}
+                                            type="button"
+                                        >
+                                            {user.isActive ? (
+                                                <PowerOff aria-hidden={true} size={15} />
+                                            ) : (
+                                                <Power aria-hidden={true} size={15} />
+                                            )}
+                                            {user.isActive ? "Disable" : "Enable"}
+                                        </button>
+                                    )}
+                                </div>
+                            </article>
+                        ))}
+                    </div>
+                    <div className="hidden overflow-x-auto md:block">
                         <table className="w-full min-w-[980px] text-left text-sm">
                             <thead className="bg-zinc-50 text-xs uppercase text-zinc-500">
                                 <tr>

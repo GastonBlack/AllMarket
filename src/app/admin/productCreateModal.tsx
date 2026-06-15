@@ -291,9 +291,9 @@ export default function ProductFormModal({
                         )}
                     </div>
 
-                    <footer className="flex justify-end gap-3 border-t border-zinc-200 px-5 py-4 sm:px-6">
+                    <footer className="grid grid-cols-2 gap-3 border-t border-zinc-200 px-5 py-4 sm:flex sm:justify-end sm:px-6">
                         <button
-                            className="h-10 cursor-pointer rounded-md border border-zinc-300 bg-white px-5 text-sm font-medium text-zinc-800 transition hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-60"
+                            className="h-10 cursor-pointer rounded-md border border-zinc-300 bg-white px-3 text-sm font-medium text-zinc-800 transition hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-60 sm:px-5"
                             disabled={isSubmitting}
                             onClick={onClose}
                             type="button"
@@ -301,7 +301,7 @@ export default function ProductFormModal({
                             Cancel
                         </button>
                         <button
-                            className="inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-md bg-zinc-950 px-5 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60"
+                            className="inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-md bg-zinc-950 px-3 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60 sm:px-5"
                             disabled={isSubmitting || Boolean(imageError)}
                             type="submit"
                         >
