@@ -124,13 +124,86 @@ if (typeof window !== "undefined") {
     );
 }
 
-export const isApiError = (error: unknown) =>
-    axios.isAxiosError<ErrorResponse>(error);
+export const isApiError = (error: unknown) => axios.isAxiosError(error);
+
+function getStringProperty(
+    value: Record<string, unknown>,
+    property: string,
+) {
+    const propertyValue = value[property];
+
+    return typeof propertyValue === "string" && propertyValue.trim()
+        ? propertyValue
+        : null;
+}
+
+function getValidationMessage(value: Record<string, unknown>) {
+    const errors = value.errors;
+
+    if (!errors || typeof errors !== "object" || Array.isArray(errors)) {
+        return null;
+    }
+
+    const messages = Object.values(errors).flatMap((fieldErrors) => {
+        if (typeof fieldErrors === "string") {
+            return fieldErrors.trim() ? [fieldErrors] : [];
+        }
+
+        if (!Array.isArray(fieldErrors)) {
+            return [];
+        }
+
+        return fieldErrors.filter(
+            (fieldError): fieldError is string =>
+                typeof fieldError === "string" && Boolean(fieldError.trim()),
+        );
+    });
+
+    return [...new Set(messages)].join(" ") || null;
+}
 
 export const getApiError = (error: unknown): ErrorResponse | null => {
     if (!isApiError(error)) {
         return null;
     }
 
-    return error.response?.data ?? null;
+    const data = error.response?.data;
+
+    if (typeof data === "string" && data.trim()) {
+        return {
+            error: "request_failed",
+            message: data,
+            statusCode: error.response?.status ?? 0,
+            timestamp: "",
+            traceId: "",
+        };
+    }
+
+    if (!data || typeof data !== "object" || Array.isArray(data)) {
+        return null;
+    }
+
+    const response = data as Record<string, unknown>;
+    const message =
+        getValidationMessage(response) ??
+        getStringProperty(response, "message") ??
+        getStringProperty(response, "detail") ??
+        getStringProperty(response, "title");
+
+    if (!message) {
+        return null;
+    }
+
+    return {
+        error: getStringProperty(response, "error") ?? "request_failed",
+        message,
+        statusCode:
+            typeof response.statusCode === "number"
+                ? response.statusCode
+                : typeof response.status === "number"
+                  ? response.status
+                  : error.response?.status ?? 0,
+        timestamp: getStringProperty(response, "timestamp") ?? "",
+        traceId: getStringProperty(response, "traceId") ?? "",
+    };
 };
