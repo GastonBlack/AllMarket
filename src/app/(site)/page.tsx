@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
+import HomeInformationSections from "@/components/home/HomeInformationSections";
 import HomeProductCarousel from "@/components/home/HomeProductCarousel";
 import { categoriesService } from "@/services/categories.service";
 import { productsService } from "@/services/products.service";
@@ -159,6 +160,8 @@ export default async function Home() {
                     products={discountProducts}
                     title="ON SALE"
                 />
+
+                <HomeInformationSections />
             </div>
         </main>
     );

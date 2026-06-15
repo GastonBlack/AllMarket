@@ -9,6 +9,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+import PortfolioDisclaimer from "./PortfolioDisclaimer";
+
 const helpLinks = [
     "Help center",
     "Order tracking",
@@ -129,6 +131,7 @@ export default function Footer() {
             <div className="mx-auto w-full max-w-[90%] border-t border-zinc-700 px-4 py-6 text-center text-xs text-zinc-300 sm:px-6 lg:px-8">
                 © 2026 AllMarket. All rights reserved.
             </div>
+            <PortfolioDisclaimer />
         </footer>
     );
 }
