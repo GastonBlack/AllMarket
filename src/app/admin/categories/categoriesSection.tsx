@@ -11,7 +11,7 @@ import {
     FilterPanel,
     SearchInput,
     SectionState,
-} from "./adminShared";
+} from "../adminShared";
 
 interface CategoriesSectionProps {
     error: string;

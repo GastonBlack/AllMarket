@@ -13,7 +13,7 @@ import { getOrderStatusStyle } from "@/utils/orderStatus";
 import {
     getNextOrderStatuses,
     orderStatusOptions,
-} from "./admin.helpers";
+} from "../admin.helpers";
 import {
     AdminPagination,
     AdminPanel,
@@ -23,7 +23,7 @@ import {
     NumberInput,
     SearchInput,
     SectionState,
-} from "./adminShared";
+} from "../adminShared";
 
 interface OrdersSectionProps {
     error: string;

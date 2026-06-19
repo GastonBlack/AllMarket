@@ -12,7 +12,7 @@ import {
     NumberInput,
     SearchInput,
     SectionState,
-} from "./adminShared";
+} from "../adminShared";
 
 interface UsersSectionProps {
     error: string;
