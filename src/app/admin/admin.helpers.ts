@@ -188,6 +188,11 @@ export function buildProductQuery(
     assignNumberParam(query, params, "minPrice");
     assignNumberParam(query, params, "maxPrice");
 
+    const discount = getStringParam(params, "discount");
+    if (discount === "true" || discount === "false") {
+        query.discount = discount === "true";
+    }
+
     if (sortBy) {
         query.sortBy = sortBy;
     }

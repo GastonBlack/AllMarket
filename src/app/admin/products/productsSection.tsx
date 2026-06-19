@@ -104,6 +104,17 @@ export default function ProductsSection({
                             ))}
                         </select>
                     </FilterField>
+                    <FilterField label="Discount">
+                        <select
+                            className="h-9 rounded-md border border-zinc-200 bg-zinc-50 px-3 text-sm outline-none transition focus:border-zinc-400 focus:bg-white focus:ring-2 focus:ring-zinc-100"
+                            defaultValue={params.get("discount") ?? ""}
+                            name="discount"
+                        >
+                            <option value="">All products</option>
+                            <option value="true">With discount</option>
+                            <option value="false">Without discount</option>
+                        </select>
+                    </FilterField>
                     <FilterField label="Status">
                         <select
                             className="h-9 rounded-md border border-zinc-200 bg-zinc-50 px-3 text-sm outline-none transition focus:border-zinc-400 focus:bg-white focus:ring-2 focus:ring-zinc-100"
@@ -232,8 +243,14 @@ export default function ProductsSection({
                                             </span>
                                         </div>
                                         <p className="mt-2 text-lg font-semibold text-zinc-950">
-                                            {formatPrice(getAdminProductDisplayPrice(product))}
-                                            {product.hasDiscount ? "AAAAAAAAAAA" : "12XXXXXXXXX"}
+                                            {formatPrice(
+                                                getAdminProductDisplayPrice(product),
+                                            )}
+                                            {product.hasDiscount && (
+                                                <span className="ml-2 text-xs font-semibold text-red-600">
+                                                    Discount
+                                                </span>
+                                            )}
                                         </p>
                                     </div>
                                 </div>

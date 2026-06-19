@@ -26,6 +26,7 @@ export interface AdminProductQueryParams {
     maxReservedStock?: number;
     minPrice?: number;
     maxPrice?: number;
+    discount?: boolean;
     sortBy?: AdminProductSortBy;
     page?: number;
     pageSize?: number;
