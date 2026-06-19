@@ -14,6 +14,7 @@ export type {
   AdminProductSortBy,
   AdminProductStatus,
   AdminUpdateProductDto,
+  UpdateAdminProductDiscount,
   AdminUserQueryParams,
   AdminUserResponseDto,
   UpdateAdminOrderStatusDto,

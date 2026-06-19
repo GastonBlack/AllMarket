@@ -75,6 +75,12 @@ export interface UpdateAdminProductStatusDto {
     isActive: boolean;
 }
 
+export interface UpdateAdminProductDiscount {
+    discount: boolean;
+    discountPercentage?: number | null;
+    discountPrice?: number | null;
+}
+
 export interface AdminCategoryQueryParams {
     search?: string;
     onlyWithoutProducts?: boolean;

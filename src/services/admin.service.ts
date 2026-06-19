@@ -17,6 +17,7 @@ import type {
     UpdateAdminOrderStatusDto,
     UpdateAdminProductStatusDto,
     UpdateAdminUserStatusDto,
+    UpdateAdminProductDiscount,
 } from "@/types";
 
 export const adminService = {
@@ -78,6 +79,18 @@ export const adminService = {
     ): Promise<AdminProductResponseDto> {
         const response = await api.put<AdminProductResponseDto>(
             `/api/admin/products/${productId}`,
+            dto,
+        );
+
+        return response.data;
+    },
+
+    async updateProductDiscount(
+        productId: number,
+        dto: UpdateAdminProductDiscount,
+    ): Promise<boolean> {
+        const response = await api.patch<boolean>(
+            `/api/admin/products/${productId}/discount`,
             dto,
         );
 
