@@ -7,10 +7,9 @@ import HomeProductCarousel from "@/components/home/HomeProductCarousel";
 import { categoriesService } from "@/services/categories.service";
 import { productsService } from "@/services/products.service";
 import type { CategoryResponseDto, ProductResponseDto } from "@/types";
-import { hasProductDiscount } from "@/utils/productPricing";
 
 export const metadata: Metadata = {
-    description: "Shop popular categories and discounted products at AllMarket.",
+    description: "Shop popular categories and products at AllMarket.",
     title: "AllMarket",
 };
 
@@ -107,31 +106,22 @@ async function getPopularCategorySections() {
         }),
     );
 
-    return categoryPages
-        .filter((section) => section.totalItems >= 8)
-        .map<HomeCategorySection>(({ category, products }) => ({
-            category,
-            products,
-        }))
-        .slice(0, 4);
-}
+    return categoryPages.reduce<HomeCategorySection[]>((sections, section) => {
+        if (section.totalItems < 8 || sections.length >= 4) {
+            return sections;
+        }
 
-async function getDiscountProducts() {
-    const productPage = await productsService.getAll({
-        onlyAvailable: true,
-        page: 1,
-        pageSize: 40,
-        sortBy: "popular",
-    });
+        sections.push({
+            category: section.category,
+            products: section.products,
+        });
 
-    return productPage.items.filter(hasProductDiscount);
+        return sections;
+    }, []);
 }
 
 export default async function Home() {
-    const [categorySections, discountProducts] = await Promise.all([
-        getPopularCategorySections(),
-        getDiscountProducts(),
-    ]);
+    const categorySections = await getPopularCategorySections();
     const sectionGroups = chunkItems(categorySections, 2);
 
     return (
@@ -153,13 +143,6 @@ export default async function Home() {
                         ))}
                     </div>
                 ))}
-
-                <HomeProductCarousel
-                    ctaHref="/products?sortBy=popular"
-                    ctaLabel="View products"
-                    products={discountProducts}
-                    title="ON SALE"
-                />
 
                 <HomeInformationSections />
             </div>
