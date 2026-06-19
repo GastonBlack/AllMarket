@@ -17,6 +17,7 @@ import type {
     AdminUserResponseDto,
     OrderStatus,
     PaginatedResponse,
+    UpdateAdminProductDiscount,
 } from "@/types";
 
 import {
@@ -29,11 +30,11 @@ import {
     type AdminSection,
 } from "./admin.helpers";
 import { SectionTabs } from "./adminShared";
-import CategoriesSection, { CategoryFormModal } from "./categoriesSection";
-import OrdersSection, { OrderDetailsModal } from "./ordersSection";
-import ProductCreateModal from "./productCreateModal";
-import ProductsSection from "./productsSection";
-import UsersSection from "./usersSection";
+import CategoriesSection, { CategoryFormModal } from "./categories/categoriesSection";
+import OrdersSection, { OrderDetailsModal } from "./orders/ordersSection";
+import ProductCreateModal from "./products/productCreateModal";
+import ProductsSection from "./products/productsSection";
+import UsersSection from "./users/usersSection";
 
 interface AdminClientProps {
     currentUserName: string;
@@ -74,6 +75,9 @@ export default function AdminClient({ currentUserName }: AdminClientProps) {
         useState<AdminProductResponseDto | null>(null);
     const [isCreatingProduct, setIsCreatingProduct] = useState(false);
     const [productCreateError, setProductCreateError] = useState("");
+    const [isUpdatingProductDiscount, setIsUpdatingProductDiscount] =
+        useState(false);
+    const [productDiscountError, setProductDiscountError] = useState("");
     const [isCategoryFormOpen, setIsCategoryFormOpen] = useState(false);
     const [editingCategory, setEditingCategory] =
         useState<AdminCategoryResponseDto | null>(null);
@@ -319,6 +323,93 @@ export default function AdminClient({ currentUserName }: AdminClientProps) {
         setIsCreatingProduct(false);
     }
 
+    function syncProductDiscount(
+        productId: number,
+        hasDiscount: boolean,
+        discountPrice: number | null,
+    ) {
+        setEditingProduct((current) =>
+            current?.id === productId
+                ? { ...current, discountPrice, hasDiscount }
+                : current,
+        );
+        setProductsPage((current) =>
+            current
+                ? {
+                      ...current,
+                      items: current.items.map((product) =>
+                          product.id === productId
+                              ? { ...product, discountPrice, hasDiscount }
+                              : product,
+                      ),
+                  }
+                : current,
+        );
+    }
+
+    async function applyProductDiscount(dto: UpdateAdminProductDiscount) {
+        if (!editingProduct) {
+            return;
+        }
+
+        const discountPrice =
+            dto.discountPrice ??
+            (dto.discountPercentage
+                ? Number(
+                      (
+                          editingProduct.price *
+                          (1 - dto.discountPercentage / 100)
+                      ).toFixed(2),
+                  )
+                : null);
+
+        setIsUpdatingProductDiscount(true);
+        setProductDiscountError("");
+
+        try {
+            await adminService.updateProductDiscount(editingProduct.id, dto);
+            syncProductDiscount(editingProduct.id, true, discountPrice);
+            setReloadKey((current) => current + 1);
+            showNotification("The product discount has been applied.", "success");
+        } catch (discountError) {
+            const message =
+                getApiError(discountError)?.message ??
+                "We could not update this product discount.";
+            setProductDiscountError(message);
+            showNotification(message, "error");
+        }
+
+        setIsUpdatingProductDiscount(false);
+    }
+
+    async function disableProductDiscount() {
+        if (!editingProduct) {
+            return;
+        }
+
+        setIsUpdatingProductDiscount(true);
+        setProductDiscountError("");
+
+        try {
+            await adminService.updateProductDiscount(editingProduct.id, {
+                discount: false,
+                discountPercentage: null,
+                discountPrice: null,
+            });
+            syncProductDiscount(editingProduct.id, false, null);
+            setReloadKey((current) => current + 1);
+            showNotification("The product discount has been disabled.", "success");
+        } catch (discountError) {
+            const message =
+                getApiError(discountError)?.message ??
+                "We could not disable this product discount.";
+            setProductDiscountError(message);
+            showNotification(message, "error");
+        }
+
+        setIsUpdatingProductDiscount(false);
+    }
+
     function openCreateCategory() {
         setEditingCategory(null);
         setCategoryMutationError("");
@@ -520,11 +611,13 @@ export default function AdminClient({ currentUserName }: AdminClientProps) {
                     onCreateProduct={() => {
                         setEditingProduct(null);
                         setProductCreateError("");
+                        setProductDiscountError("");
                         setIsCreateProductOpen(true);
                     }}
                     onEditProduct={(product) => {
                         setEditingProduct(product);
                         setProductCreateError("");
+                        setProductDiscountError("");
                         setIsCreateProductOpen(true);
                     }}
                     onFilterSubmit={handleFilterSubmit}
@@ -611,15 +704,20 @@ export default function AdminClient({ currentUserName }: AdminClientProps) {
             {isCreateProductOpen && (
                 <ProductCreateModal
                     categories={categoryOptions}
+                    discountError={productDiscountError}
                     error={productCreateError}
+                    isUpdatingDiscount={isUpdatingProductDiscount}
                     isSubmitting={isCreatingProduct}
+                    onApplyDiscount={(dto) => void applyProductDiscount(dto)}
                     onClose={() => {
-                        if (!isCreatingProduct) {
+                        if (!isCreatingProduct && !isUpdatingProductDiscount) {
                             setIsCreateProductOpen(false);
                             setEditingProduct(null);
                             setProductCreateError("");
+                            setProductDiscountError("");
                         }
                     }}
+                    onDisableDiscount={() => void disableProductDiscount()}
                     onSubmit={(product) => void saveProduct(product)}
                     product={editingProduct}
                 />
