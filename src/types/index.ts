@@ -1,4 +1,4 @@
-export type { AuthResponseDto, LoginDto, RegisterDto, UserRole } from "./auth.types";
+export type { AuthResponseDto, LoginDto, RegisterDto, ResendEmailVerificationDto, UserRole, VerifyEmailDto } from "./auth.types";
 export type {
   AdminCategoryQueryParams,
   AdminCategoryResponseDto,

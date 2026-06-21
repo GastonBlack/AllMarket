@@ -19,3 +19,12 @@ export interface RegisterDto {
   address: string;
   phone?: string | null;
 }
+
+export interface VerifyEmailDto {
+  email: string;
+  code: string;
+}
+
+export interface ResendEmailVerificationDto {
+  email: string;
+}

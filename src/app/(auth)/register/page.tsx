@@ -55,10 +55,10 @@ export default function RegisterPage() {
                 phone: normalizedPhone || null,
             });
             showNotification(
-                "Your account has been created successfully.",
+                "Your account has been created. Check your email for the verification code.",
                 "success",
             );
-            push("/login");
+            push(`/verify-email?email=${encodeURIComponent(email.trim().toLowerCase())}`);
             refresh();
         } catch (error) {
             const message =

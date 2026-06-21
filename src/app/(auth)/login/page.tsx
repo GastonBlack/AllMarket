@@ -18,6 +18,7 @@ export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [apiError, setApiError] = useState("");
+    const [showVerifyLink, setShowVerifyLink] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
@@ -28,6 +29,7 @@ export default function LoginPage() {
     async function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
         event.preventDefault();
         setApiError("");
+        setShowVerifyLink(false);
 
         if (!isEmailValid || !isPasswordValid) {
             return;
@@ -46,6 +48,7 @@ export default function LoginPage() {
                 getApiError(error)?.message ??
                 "Could not sign in. Please try again later.";
             setApiError(message);
+            setShowVerifyLink(message.toLowerCase().includes("verify your email"));
             showNotification(message, "error");
         }
 
@@ -155,9 +158,17 @@ export default function LoginPage() {
                     </div>
 
                     {apiError && (
-                        <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-                            {apiError}
-                        </p>
+                        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                            <p>{apiError}</p>
+                            {showVerifyLink && (
+                                <Link
+                                    className="mt-2 inline-block font-medium text-red-800 underline"
+                                    href={`/verify-email?email=${encodeURIComponent(email.trim().toLowerCase())}`}
+                                >
+                                    Verify your email
+                                </Link>
+                            )}
+                        </div>
                     )}
 
                     <button

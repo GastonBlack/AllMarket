@@ -1,23 +1,46 @@
 import { api } from "@/lib/axios";
 
-import type { AuthResponseDto, LoginDto, RegisterDto } from "@/types";
+import type {
+    AuthResponseDto,
+    LoginDto,
+    RegisterDto,
+    ResendEmailVerificationDto,
+    VerifyEmailDto,
+} from "@/types";
 
 export const authService = {
-  async register(dto: RegisterDto): Promise<AuthResponseDto> {
-    const response = await api.post<AuthResponseDto>("/api/auth/register", dto);
+    async register(dto: RegisterDto): Promise<AuthResponseDto> {
+        const response = await api.post<AuthResponseDto>("/api/auth/register", dto);
 
-    return response.data;
-  },
+        return response.data;
+    },
 
-  async login(dto: LoginDto): Promise<AuthResponseDto> {
-    const response = await api.post<AuthResponseDto>("/api/auth/login", dto);
+    async login(dto: LoginDto): Promise<AuthResponseDto> {
+        const response = await api.post<AuthResponseDto>("/api/auth/login", dto);
 
-    return response.data;
-  },
+        return response.data;
+    },
 
-  async logout(): Promise<boolean> {
-    const response = await api.post<boolean>("/api/auth/logout");
+    async verifyEmail(dto: VerifyEmailDto): Promise<boolean> {
+        const response = await api.post<boolean>("/api/auth/verify-email", dto);
 
-    return response.data;
-  },
+        return response.data;
+    },
+
+    async resendEmailVerificationCode(
+        dto: ResendEmailVerificationDto,
+    ): Promise<boolean> {
+        const response = await api.post<boolean>(
+            "/api/auth/resend-verification-code",
+            dto,
+        );
+
+        return response.data;
+    },
+
+    async logout(): Promise<boolean> {
+        const response = await api.post<boolean>("/api/auth/logout");
+
+        return response.data;
+    },
 };
