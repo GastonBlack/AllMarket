@@ -28,3 +28,13 @@ export interface VerifyEmailDto {
 export interface ResendEmailVerificationDto {
   email: string;
 }
+
+export interface ForgotPasswordDto {
+  email: string;
+}
+
+export interface ResetPasswordDto {
+  email: string;
+  code: string;
+  newPassword: string;
+}

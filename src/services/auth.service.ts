@@ -2,9 +2,11 @@ import { api } from "@/lib/axios";
 
 import type {
     AuthResponseDto,
+    ForgotPasswordDto,
     LoginDto,
     RegisterDto,
     ResendEmailVerificationDto,
+    ResetPasswordDto,
     VerifyEmailDto,
 } from "@/types";
 
@@ -34,6 +36,18 @@ export const authService = {
             "/api/auth/resend-verification-code",
             dto,
         );
+
+        return response.data;
+    },
+
+    async forgotPassword(dto: ForgotPasswordDto): Promise<boolean> {
+        const response = await api.post<boolean>("/api/auth/forgot-password", dto);
+
+        return response.data;
+    },
+
+    async resetPassword(dto: ResetPasswordDto): Promise<boolean> {
+        const response = await api.post<boolean>("/api/auth/reset-password", dto);
 
         return response.data;
     },

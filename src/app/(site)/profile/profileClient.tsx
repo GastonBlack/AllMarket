@@ -87,11 +87,13 @@ export default function ProfileClient() {
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [passwordCode, setPasswordCode] = useState("");
     const [isPasswordFormOpen, setIsPasswordFormOpen] = useState(false);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [isChangingPassword, setIsChangingPassword] = useState(false);
+    const [isSendingPasswordCode, setIsSendingPasswordCode] = useState(false);
     const [error, setError] = useState("");
     const [passwordError, setPasswordError] = useState("");
     const trimmedFullName = fullName.trim();
@@ -196,6 +198,7 @@ export default function ProfileClient() {
         setCurrentPassword("");
         setNewPassword("");
         setConfirmPassword("");
+        setPasswordCode("");
         setPasswordError("");
     }
 
@@ -222,12 +225,20 @@ export default function ProfileClient() {
             return;
         }
 
+        if (!/^\d{6}$/.test(passwordCode)) {
+            const message = "Enter the 6-digit code sent to your email.";
+            setPasswordError(message);
+            showNotification(message, "error");
+            return;
+        }
+
         setIsChangingPassword(true);
 
         try {
             await usersService.changePassword({
                 currentPassword,
                 newPassword,
+                code: passwordCode,
             });
 
             resetPasswordForm();
@@ -242,6 +253,24 @@ export default function ProfileClient() {
         }
 
         setIsChangingPassword(false);
+    }
+
+    async function handleRequestPasswordCode() {
+        setPasswordError("");
+        setIsSendingPasswordCode(true);
+
+        try {
+            await usersService.requestPasswordChangeCode();
+            showNotification("Password change code sent to your email.", "success");
+        } catch (codeError) {
+            const message =
+                getApiError(codeError)?.message ??
+                "Could not send the password change code.";
+            setPasswordError(message);
+            showNotification(message, "error");
+        }
+
+        setIsSendingPasswordCode(false);
     }
 
     async function handleLogout() {
@@ -494,7 +523,7 @@ export default function ProfileClient() {
                                                     </h3>
                                                     <p className="mt-1 max-w-xl text-sm leading-6 text-zinc-600">
                                                         Keep your account protected by updating
-                                                        your password regularly.
+                                                        your password with an email verification code.
                                                     </p>
                                                 </div>
                                             </div>
@@ -515,12 +544,72 @@ export default function ProfileClient() {
                                                 className="mt-5 grid gap-4 border-t border-zinc-100 pt-5 md:grid-cols-2"
                                                 onSubmit={handleChangePassword}
                                             >
+                                                <div className="rounded-md border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm leading-6 text-yellow-950 md:col-span-2">
+                                                    <p className="font-medium">
+                                                        How password changes work
+                                                    </p>
+                                                    <p className="mt-1">
+                                                        First request a 6-digit code, then enter your
+                                                        current password, your new password, and the code
+                                                        sent to your email.
+                                                    </p>
+                                                </div>
+
                                                 {passwordError && (
                                                     <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 md:col-span-2">
                                                         {passwordError}
                                                     </p>
                                                 )}
-                                                <div>
+                                                <div className="grid gap-4 md:col-span-2 md:grid-cols-[auto_minmax(0,1fr)] md:items-end">
+                                                    <div>
+                                                        <p className="text-sm font-medium text-zinc-800">
+                                                            Verification code
+                                                        </p>
+                                                        <p className="mt-1 text-xs text-zinc-500">
+                                                            Send a 6-digit code to your email.
+                                                        </p>
+                                                        <button
+                                                            className="mt-2 h-12 w-full cursor-pointer rounded-md border border-zinc-300 bg-white px-5 text-sm font-medium text-zinc-800 transition hover:bg-zinc-50 disabled:cursor-not-allowed disabled:text-zinc-400 md:w-auto"
+                                                            disabled={isSendingPasswordCode}
+                                                            onClick={handleRequestPasswordCode}
+                                                            type="button"
+                                                        >
+                                                            {isSendingPasswordCode
+                                                                ? "Sending code..."
+                                                                : "Send code"}
+                                                        </button>
+                                                    </div>
+
+                                                    <div>
+                                                        <label
+                                                            className="text-sm font-medium text-zinc-800"
+                                                            htmlFor="password-code"
+                                                        >
+                                                            Email verification code
+                                                        </label>
+                                                        <input
+                                                            aria-label="Email code"
+                                                            autoComplete="one-time-code"
+                                                            className="mt-2 h-12 w-full rounded-md border border-zinc-300 bg-white px-3 text-center text-xl font-semibold tracking-[0.45em] text-zinc-950 outline-none transition focus:border-zinc-950 focus:ring-2 focus:ring-zinc-200"
+                                                            id="password-code"
+                                                            inputMode="numeric"
+                                                            maxLength={6}
+                                                            onChange={(event) =>
+                                                                setPasswordCode(
+                                                                    event.target.value
+                                                                        .replace(/\D/g, "")
+                                                                        .slice(0, 6),
+                                                                )
+                                                            }
+                                                            placeholder="000000"
+                                                            required
+                                                            type="text"
+                                                            value={passwordCode}
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <div className="md:col-span-2">
                                                     <label
                                                         className="text-sm font-medium text-zinc-800"
                                                         htmlFor="current-password"
@@ -589,7 +678,7 @@ export default function ProfileClient() {
                                                     />
                                                 </div>
 
-                                                <div className="flex items-end gap-2">
+                                                <div className="flex md:col-span-2">
                                                     <button
                                                         className="h-11 cursor-pointer rounded-md bg-zinc-950 px-5 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-400"
                                                         disabled={isChangingPassword}

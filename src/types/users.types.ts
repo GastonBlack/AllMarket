@@ -25,4 +25,5 @@ export interface UserOrderHistoryDto {
 export interface ChangePasswordDto {
     currentPassword: string;
     newPassword: string;
+    code: string;
 }

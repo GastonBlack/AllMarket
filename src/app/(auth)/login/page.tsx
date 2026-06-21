@@ -155,6 +155,12 @@ export default function LoginPage() {
                             )}
                             <span>Password must be at least 6 characters.</span>
                         </div>
+                        <Link
+                            className="mt-2 inline-block text-sm font-medium text-zinc-700 underline hover:text-zinc-950"
+                            href="/forgot-password"
+                        >
+                            Forgot password?
+                        </Link>
                     </div>
 
                     {apiError && (

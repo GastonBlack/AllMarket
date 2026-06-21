@@ -32,4 +32,10 @@ export const usersService = {
 
     return response.data;
   },
+
+  async requestPasswordChangeCode(): Promise<boolean> {
+    const response = await api.post<boolean>("/api/users/me/password-code");
+
+    return response.data;
+  },
 };
